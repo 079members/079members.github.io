@@ -1,1 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Logger</title>
+    <script>
+        async function sendIPToWebhook() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
 
+                // Send IP to the backend for forwarding to Discord webhook
+                await fetch('/log-ip', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ip: data.ip })
+                });
+            } catch (error) {
+                console.error('Error logging IP:', error);
+            }
+        }
+
+        window.onload = sendIPToWebhook;
+    </script>
+</head>
+<body>
+    <h1>Welcome!</h1>
+    <p>Your IP has been logged.</p>
+</body>
+</html>
